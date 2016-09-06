@@ -39,6 +39,7 @@ public class RedisClusterClientImpl implements RedisClient {
                     redisClusterConfig.getMaxRedirection());
         } catch (Exception e) {
             LOGGER.error("**ERROR:{}", e.getMessage());
+            throw e;
         }
         this.vertx = vertx;
     }
@@ -52,6 +53,7 @@ public class RedisClusterClientImpl implements RedisClient {
                 jedisCluster.close();
                 future.succeeded();
             } catch (IOException e) {
+                LOGGER.error("ERROR:{}", e.getMessage());
                 future.fail(e.getMessage());
             }
 
@@ -60,7 +62,7 @@ public class RedisClusterClientImpl implements RedisClient {
                 if (asyResult.succeeded()) {
                     handler.handle(Future.succeededFuture());
                 } else {
-                    handler.handle(Future.failedFuture(asyResult.cause().getMessage()));
+                    handler.handle(Future.failedFuture(asyResult.cause()));
                 }
             }
 
@@ -71,11 +73,21 @@ public class RedisClusterClientImpl implements RedisClient {
     @Override
     public RedisClient append(String key, String value, Handler<AsyncResult<Long>> handler) {
         vertx.executeBlocking(futrue -> {
-            Long result = jedisCluster.append(key, value);
-            futrue.complete(result);
+            try {
+                Long result = jedisCluster.append(key, value);
+                futrue.complete(result);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                futrue.fail(e);
+            }
         }, (AsyncResult<Long> asyResult) -> {
-            if (handler != null)
-                handler.handle(Future.succeededFuture(asyResult.result()));
+            if (handler != null) {
+                if (asyResult.succeeded()) {
+                    handler.handle(Future.succeededFuture(asyResult.result()));
+                } else {
+                    handler.handle(Future.failedFuture(asyResult.cause()));
+                }
+            }
         });
         return this;
     }
@@ -388,11 +400,21 @@ public class RedisClusterClientImpl implements RedisClient {
     @Override
     public RedisClient expire(String key, int seconds, Handler<AsyncResult<Long>> handler) {
         vertx.executeBlocking(future -> {
-            Long result = jedisCluster.expire(key, seconds);
-            future.complete(result);
+            try {
+                Long result = jedisCluster.expire(key, seconds);
+                future.complete(result);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                future.fail(e);
+            }
         }, (AsyncResult<Long> asyResult) -> {
-            if (handler != null)
-                handler.handle(Future.succeededFuture(asyResult.result()));
+            if (handler != null) {
+                if (asyResult.succeeded()) {
+                    handler.handle(Future.succeededFuture(asyResult.result()));
+                } else {
+                    handler.handle(Future.failedFuture(asyResult.cause()));
+                }
+            }
         });
         return this;
     }
@@ -401,11 +423,21 @@ public class RedisClusterClientImpl implements RedisClient {
     public RedisClient expireat(String key, long seconds, Handler<AsyncResult<Long>> handler) {
 
         vertx.executeBlocking(future -> {
-            Long result = jedisCluster.expireAt(key, seconds);
-            future.complete(result);
+            try {
+                Long result = jedisCluster.expireAt(key, seconds);
+                future.complete(result);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                future.fail(e);
+            }
         }, (AsyncResult<Long> asyResult) -> {
-            if (handler != null)
-                handler.handle(Future.succeededFuture(asyResult.result()));
+            if (handler != null) {
+                if (asyResult.succeeded()) {
+                    handler.handle(Future.succeededFuture(asyResult.result()));
+                } else {
+                    handler.handle(Future.failedFuture(asyResult.cause()));
+                }
+            }
         });
         return this;
     }
@@ -424,11 +456,21 @@ public class RedisClusterClientImpl implements RedisClient {
     public RedisClient get(String key, Handler<AsyncResult<String>> handler) {
 
         vertx.executeBlocking(future -> {
-            String result = jedisCluster.get(key);
-            future.complete(result);
+            try {
+                String result = jedisCluster.get(key);
+                future.complete(result);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                future.fail(e);
+            }
         }, (AsyncResult<String> asyResult) -> {
-            if (handler != null)
-                handler.handle(Future.succeededFuture(asyResult.result()));
+            if (handler != null) {
+                if (asyResult.succeeded()) {
+                    handler.handle(Future.succeededFuture(asyResult.result()));
+                } else {
+                    handler.handle(Future.failedFuture(asyResult.cause()));
+                }
+            }
         });
         return this;
 
@@ -457,11 +499,21 @@ public class RedisClusterClientImpl implements RedisClient {
     @Override
     public RedisClient hdel(String key, String field, Handler<AsyncResult<Long>> handler) {
         vertx.executeBlocking(future -> {
-            Long result = jedisCluster.hdel(key, field);
-            future.complete(result);
+            try {
+                Long result = jedisCluster.hdel(key, field);
+                future.complete(result);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                future.fail(e);
+            }
         }, (AsyncResult<Long> asyResult) -> {
-            if (handler != null)
-                handler.handle(Future.succeededFuture(asyResult.result()));
+            if (handler != null) {
+                if (asyResult.succeeded()) {
+                    handler.handle(Future.succeededFuture(asyResult.result()));
+                } else {
+                    handler.handle(Future.failedFuture(asyResult.cause()));
+                }
+            }
         });
         return this;
     }
@@ -480,11 +532,21 @@ public class RedisClusterClientImpl implements RedisClient {
     public RedisClient hget(String key, String field, Handler<AsyncResult<String>> handler) {
 
         vertx.executeBlocking(future -> {
-            String hreuslt = jedisCluster.hget(key, field);
-            future.complete(hreuslt);
+            try {
+                String hreuslt = jedisCluster.hget(key, field);
+                future.complete(hreuslt);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                future.fail(e);
+            }
         }, (AsyncResult<String> asyResult) -> {
-            if (handler != null)
-                handler.handle(Future.succeededFuture(asyResult.result()));
+            if (handler != null) {
+                if (asyResult.succeeded()) {
+                    handler.handle(Future.succeededFuture(asyResult.result()));
+                } else {
+                    handler.handle(Future.failedFuture(asyResult.cause()));
+                }
+            }
         });
 
         return this;
@@ -499,7 +561,8 @@ public class RedisClusterClientImpl implements RedisClient {
                 allValues = jedisCluster.hgetAll(key);
             } catch (Exception e) {
                 LOGGER.error(e.getMessage());
-                throw e;
+                future.fail(e);
+                return;
             }
             JsonObject jsonObject = new JsonObject();
             for (Map.Entry<String, String> entry : allValues.entrySet()) {
@@ -509,8 +572,13 @@ public class RedisClusterClientImpl implements RedisClient {
             }
             future.complete(jsonObject);
         }, (AsyncResult<JsonObject> asyResult) -> {
-            if (handler != null)
-                handler.handle(Future.succeededFuture(asyResult.result()));
+            if (handler != null) {
+                if (asyResult.succeeded()) {
+                    handler.handle(Future.succeededFuture(asyResult.result()));
+                } else {
+                    handler.handle(Future.failedFuture(asyResult.cause()));
+                }
+            }
         });
 
         return this;
@@ -520,11 +588,21 @@ public class RedisClusterClientImpl implements RedisClient {
     public RedisClient hincrby(String key, String field, long increment, Handler<AsyncResult<Long>> handler) {
 
         vertx.executeBlocking(future -> {
-            Long incrReuslt = jedisCluster.hincrBy(key, field, increment);
-            future.complete(incrReuslt);
+            try {
+                Long incrReuslt = jedisCluster.hincrBy(key, field, increment);
+                future.complete(incrReuslt);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                future.fail(e);
+            }
         }, (AsyncResult<Long> asyResult) -> {
-            if (handler != null)
-                handler.handle(Future.succeededFuture(asyResult.result()));
+            if (handler != null) {
+                if (asyResult.succeeded()) {
+                    handler.handle(Future.succeededFuture(asyResult.result()));
+                } else {
+                    handler.handle(Future.failedFuture(asyResult.cause()));
+                }
+            }
         });
 
         return this;
@@ -542,12 +620,22 @@ public class RedisClusterClientImpl implements RedisClient {
 
     @Override
     public RedisClient hlen(String key, Handler<AsyncResult<Long>> handler) {
-        vertx.executeBlocking(futuer -> {
-            Long setResult = jedisCluster.hlen(key);
-            futuer.complete(setResult);
+        vertx.executeBlocking(future -> {
+            try {
+                Long setResult = jedisCluster.hlen(key);
+                future.complete(setResult);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                future.fail(e);
+            }
         }, (AsyncResult<Long> asyResult) -> {
-            if (handler != null)
-                handler.handle(Future.succeededFuture(asyResult.result()));
+            if (handler != null) {
+                if (asyResult.succeeded()) {
+                    handler.handle(Future.succeededFuture(asyResult.result()));
+                } else {
+                    handler.handle(Future.failedFuture(asyResult.cause()));
+                }
+            }
         });
         return this;
     }
@@ -565,24 +653,44 @@ public class RedisClusterClientImpl implements RedisClient {
     @Override
     public RedisClient hset(String key, String field, String value, Handler<AsyncResult<Long>> handler) {
 
-        vertx.executeBlocking(futuer -> {
-            Long setResult = jedisCluster.hset(key, field, value);
-            futuer.complete(setResult);
+        vertx.executeBlocking(future -> {
+            try {
+                Long setResult = jedisCluster.hset(key, field, value);
+                future.complete(setResult);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                future.fail(e);
+            }
         }, (AsyncResult<Long> asyResult) -> {
-            if (handler != null)
-                handler.handle(Future.succeededFuture(asyResult.result()));
+            if (handler != null) {
+                if (asyResult.succeeded()) {
+                    handler.handle(Future.succeededFuture(asyResult.result()));
+                } else {
+                    handler.handle(Future.failedFuture(asyResult.cause()));
+                }
+            }
         });
         return this;
     }
 
     @Override
     public RedisClient hsetnx(String key, String field, String value, Handler<AsyncResult<Long>> handler) {
-        vertx.executeBlocking(futuer -> {
-            Long setResult = jedisCluster.hsetnx(key, field, value);
-            futuer.complete(setResult);
+        vertx.executeBlocking(future -> {
+            try {
+                Long setResult = jedisCluster.hsetnx(key, field, value);
+                future.complete(setResult);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                future.fail(e);
+            }
         }, (AsyncResult<Long> asyResult) -> {
-            if (handler != null)
-                handler.handle(Future.succeededFuture(asyResult.result()));
+            if (handler != null) {
+                if (asyResult.succeeded()) {
+                    handler.handle(Future.succeededFuture(asyResult.result()));
+                } else {
+                    handler.handle(Future.failedFuture(asyResult.cause()));
+                }
+            }
         });
         return this;
     }
@@ -595,11 +703,21 @@ public class RedisClusterClientImpl implements RedisClient {
     @Override
     public RedisClient incr(String key, Handler<AsyncResult<Long>> handler) {
         vertx.executeBlocking(futuer -> {
-            Long setResult = jedisCluster.incr(key);
-            futuer.complete(setResult);
+            try {
+                Long setResult = jedisCluster.incr(key);
+                futuer.complete(setResult);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                futuer.fail(e);
+            }
         }, (AsyncResult<Long> asyResult) -> {
-            if (handler != null)
-                handler.handle(Future.succeededFuture(asyResult.result()));
+            if (handler != null) {
+                if (asyResult.succeeded()) {
+                    handler.handle(Future.succeededFuture(asyResult.result()));
+                } else {
+                    handler.handle(Future.failedFuture(asyResult.cause()));
+                }
+            }
         });
         return this;
     }
@@ -607,11 +725,21 @@ public class RedisClusterClientImpl implements RedisClient {
     @Override
     public RedisClient incrby(String key, long increment, Handler<AsyncResult<Long>> handler) {
         vertx.executeBlocking(futuer -> {
-            Long setResult = jedisCluster.incrBy(key, increment);
-            futuer.complete(setResult);
+            try {
+                Long setResult = jedisCluster.incrBy(key, increment);
+                futuer.complete(setResult);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                futuer.fail(e);
+            }
         }, (AsyncResult<Long> asyResult) -> {
-            if (handler != null)
-                handler.handle(Future.succeededFuture(asyResult.result()));
+            if (handler != null) {
+                if (asyResult.succeeded()) {
+                    handler.handle(Future.succeededFuture(asyResult.result()));
+                } else {
+                    handler.handle(Future.failedFuture(asyResult.cause()));
+                }
+            }
         });
         return this;
     }
@@ -644,11 +772,21 @@ public class RedisClusterClientImpl implements RedisClient {
     @Override
     public RedisClient lindex(String key, int index, Handler<AsyncResult<String>> handler) {
         vertx.executeBlocking(futuer -> {
-            String setResult = jedisCluster.lindex(key, index);
-            futuer.complete(setResult);
+            try {
+                String setResult = jedisCluster.lindex(key, index);
+                futuer.complete(setResult);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                futuer.fail(e);
+            }
         }, (AsyncResult<String> asyResult) -> {
-            if (handler != null)
-                handler.handle(Future.succeededFuture(asyResult.result()));
+            if (handler != null) {
+                if (asyResult.succeeded()) {
+                    handler.handle(Future.succeededFuture(asyResult.result()));
+                } else {
+                    handler.handle(Future.failedFuture(asyResult.cause()));
+                }
+            }
         });
         return this;
     }
@@ -659,11 +797,21 @@ public class RedisClusterClientImpl implements RedisClient {
         vertx.executeBlocking(futuer -> {
             BinaryClient.LIST_POSITION list_position = option == InsertOptions.BEFORE ?
                     BinaryClient.LIST_POSITION.BEFORE : BinaryClient.LIST_POSITION.AFTER;
-            Long setResult = jedisCluster.linsert(key, list_position, pivot, value);
-            futuer.complete(setResult);
+            try {
+                Long setResult = jedisCluster.linsert(key, list_position, pivot, value);
+                futuer.complete(setResult);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                futuer.fail(e);
+            }
         }, (AsyncResult<Long> asyResult) -> {
-            if (handler != null)
-                handler.handle(Future.succeededFuture(asyResult.result()));
+            if (handler != null) {
+                if (asyResult.succeeded()) {
+                    handler.handle(Future.succeededFuture(asyResult.result()));
+                } else {
+                    handler.handle(Future.failedFuture(asyResult.cause()));
+                }
+            }
         });
         return this;
     }
@@ -671,11 +819,21 @@ public class RedisClusterClientImpl implements RedisClient {
     @Override
     public RedisClient llen(String key, Handler<AsyncResult<Long>> handler) {
         vertx.executeBlocking(futuer -> {
-            Long setResult = jedisCluster.llen(key);
-            futuer.complete(setResult);
+            try {
+                Long setResult = jedisCluster.llen(key);
+                futuer.complete(setResult);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                futuer.fail(e);
+            }
         }, (AsyncResult<Long> asyResult) -> {
-            if (handler != null)
-                handler.handle(Future.succeededFuture(asyResult.result()));
+            if (handler != null) {
+                if (asyResult.succeeded()) {
+                    handler.handle(Future.succeededFuture(asyResult.result()));
+                } else {
+                    handler.handle(Future.failedFuture(asyResult.cause()));
+                }
+            }
         });
         return this;
     }
@@ -683,11 +841,21 @@ public class RedisClusterClientImpl implements RedisClient {
     @Override
     public RedisClient lpop(String key, Handler<AsyncResult<String>> handler) {
         vertx.executeBlocking(futuer -> {
-            String setResult = jedisCluster.lpop(key);
-            futuer.complete(setResult);
+            try {
+                String setResult = jedisCluster.lpop(key);
+                futuer.complete(setResult);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                futuer.fail(e);
+            }
         }, (AsyncResult<String> asyResult) -> {
-            if (handler != null)
-                handler.handle(Future.succeededFuture(asyResult.result()));
+            if (handler != null) {
+                if (asyResult.succeeded()) {
+                    handler.handle(Future.succeededFuture(asyResult.result()));
+                } else {
+                    handler.handle(Future.failedFuture(asyResult.cause()));
+                }
+            }
         });
         return this;
     }
@@ -701,11 +869,22 @@ public class RedisClusterClientImpl implements RedisClient {
     public RedisClient lpush(String key, String value, Handler<AsyncResult<Long>> handler) {
 
         vertx.executeBlocking(futuer -> {
-            Long setResult = jedisCluster.lpush(key, value);
-            futuer.complete(setResult);
+            try {
+                Integer.valueOf("");
+                Long setResult = jedisCluster.lpush(key, value);
+                futuer.complete(setResult);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                futuer.fail(e);
+            }
         }, (AsyncResult<Long> asyResult) -> {
-            if (handler != null)
-                handler.handle(Future.succeededFuture(asyResult.result()));
+            if (handler != null) {
+                if (asyResult.succeeded()) {
+                    handler.handle(Future.succeededFuture(asyResult.result()));
+                } else {
+                    handler.handle(Future.failedFuture(asyResult.cause()));
+                }
+            }
         });
         return this;
     }
@@ -719,11 +898,21 @@ public class RedisClusterClientImpl implements RedisClient {
     public RedisClient lrange(String key, long from, long to, Handler<AsyncResult<JsonArray>> handler) {
 
         vertx.executeBlocking(future -> {
-            List<String> lrangReuslt = jedisCluster.lrange(key, from, to);
-            future.complete(new JsonArray(lrangReuslt));
-        }, (AsyncResult<JsonArray> asyreuslt) -> {
-            if (handler != null)
-                handler.handle(Future.succeededFuture(asyreuslt.result()));
+            try {
+                List<String> lrangReuslt = jedisCluster.lrange(key, from, to);
+                future.complete(new JsonArray(lrangReuslt));
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                future.fail(e);
+            }
+        }, (AsyncResult<JsonArray> asyResult) -> {
+            if (handler != null) {
+                if (asyResult.succeeded()) {
+                    handler.handle(Future.succeededFuture(asyResult.result()));
+                } else {
+                    handler.handle(Future.failedFuture(asyResult.cause()));
+                }
+            }
         });
         return this;
 
@@ -732,11 +921,21 @@ public class RedisClusterClientImpl implements RedisClient {
     @Override
     public RedisClient lrem(String key, long count, String value, Handler<AsyncResult<Long>> handler) {
         vertx.executeBlocking(futuer -> {
-            Long setResult = jedisCluster.lrem(key, count, value);
-            futuer.complete(setResult);
+            try {
+                Long setResult = jedisCluster.lrem(key, count, value);
+                futuer.complete(setResult);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                futuer.fail(e);
+            }
         }, (AsyncResult<Long> asyResult) -> {
-            if (handler != null)
-                handler.handle(Future.succeededFuture(asyResult.result()));
+            if (handler != null) {
+                if (asyResult.succeeded()) {
+                    handler.handle(Future.succeededFuture(asyResult.result()));
+                } else {
+                    handler.handle(Future.failedFuture(asyResult.cause()));
+                }
+            }
         });
         return this;
     }
